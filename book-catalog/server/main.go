@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"os"
 
 	"book-catalog/ent"
 	"book-catalog/graph"
@@ -15,7 +16,6 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
-	"github.com/atlas-health/atlas-go-modules/maincomposer/util/alog"
 )
 
 func main() {
@@ -35,8 +35,7 @@ func main() {
 	}
 
 	// Configure the server and start listening on :8081.
-	logger := alog.InitLogger("ent-poc")
-	logger.SetLevel(zerolog.DebugLevel)
+	logger := zerolog.New(os.Stderr).With().Timestamp().Logger().Level(zerolog.DebugLevel)
 	srv := handler.NewDefaultServer(graph.NewSchema(logger, client))
 	http.Handle("/",
 		playground.Handler("Book Catalog", "/query"),

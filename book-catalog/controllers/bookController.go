@@ -4,7 +4,7 @@ import (
 	"book-catalog/ent"
 	"context"
 
-	"github.com/atlas-health/atlas-go-modules/maincomposer/util/alog"
+	"github.com/rs/zerolog"
 )
 
 type BookController interface {
@@ -21,13 +21,13 @@ type BookController interface {
 }
 
 type bookController struct {
-	logger alog.Logger
+	logger zerolog.Logger
 	ent    *ent.Client
 }
 
-func NewBookController(logger alog.Logger, ent *ent.Client) BookController {
+func NewBookController(logger zerolog.Logger, ent *ent.Client) BookController {
 	return &bookController{
-		logger: logger.As("struct", "bookController"),
+		logger: logger,
 		ent:    ent,
 	}
 }

@@ -6,7 +6,6 @@ require (
 	entgo.io/contrib v0.4.5
 	entgo.io/ent v0.12.5
 	github.com/99designs/gqlgen v0.17.41
-	github.com/atlas-health/atlas-go-modules v1.2.3
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
