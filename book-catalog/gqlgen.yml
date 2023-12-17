@@ -1,0 +1,46 @@
+# schema tells gqlgen where the GraphQL schema is located.
+# schema:
+#   - graph/*.graphqls
+schema:
+ - graph/ent.graphql
+ - graph/book.graphql
+
+
+# Where should the generated server code go?
+exec:
+  filename: graph/generated.go
+  package: graph
+
+# Uncomment to enable federation
+# federation:
+#   filename: graph/federation.go
+#   package: graph
+
+# Where should the resolver implementations go?
+resolver:
+  layout: follow-schema
+  dir: graph
+  # package: graph
+  # filename_template: "{name}.resolvers.go"
+  # Optional: turn on to not generate template comments above resolvers
+  # omit_template_comment: false
+
+# gqlgen will search for any type names in the schema in these go packages
+# if they match it will use them, otherwise it will generate them.
+
+# autobind tells gqngen to search for any type names in the GraphQL schema in the
+# provided package. If they match it will use them, otherwise it will generate new.
+autobind:
+ - book-catalog/ent
+ - book-catalog/ent/author
+ - book-catalog/ent/book
+
+# This section declares type mapping between the GraphQL and Go type systems.
+models:
+ # Defines the ID field as Go 'int'.
+ ID:
+   model:
+     - github.com/99designs/gqlgen/graphql.IntID
+ Node:
+   model:
+     - ent.Noder
