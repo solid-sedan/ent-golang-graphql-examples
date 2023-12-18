@@ -36,6 +36,6 @@ models:
  ID:
    model:
      - github.com/99designs/gqlgen/graphql.IntID
-#  Node:
-#    model:
-#      - book-catalog/ent.Noder
+ Node:
+   model:
+     - book-catalog/ent.Noder
