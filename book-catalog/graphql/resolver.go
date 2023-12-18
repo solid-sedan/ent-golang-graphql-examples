@@ -1,8 +1,9 @@
-package graph
+package graphql
 
 import (
 	"book-catalog/controllers"
 	"book-catalog/ent"
+	"book-catalog/graphql/generated"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/rs/zerolog"
@@ -15,7 +16,7 @@ type Resolver struct {
 
 // NewSchema creates a graphql executable schema.
 func NewSchema(logger zerolog.Logger, client *ent.Client) graphql.ExecutableSchema {
-	return NewExecutableSchema(Config{
+	return generated.NewExecutableSchema(generated.Config{
 		Resolvers: &Resolver{
 			BookClient: controllers.NewBookController(logger, client),
 		},

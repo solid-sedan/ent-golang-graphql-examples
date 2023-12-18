@@ -89,6 +89,9 @@ func newAuthorPaginateArgs(rv map[string]any) *authorPaginateArgs {
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
 	}
+	if v, ok := rv[whereField].(*AuthorWhereInput); ok {
+		args.opts = append(args.opts, WithAuthorFilter(v.Filter))
+	}
 	return args
 }
 
@@ -182,6 +185,9 @@ func newBookPaginateArgs(rv map[string]any) *bookPaginateArgs {
 	}
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*BookWhereInput); ok {
+		args.opts = append(args.opts, WithBookFilter(v.Filter))
 	}
 	return args
 }

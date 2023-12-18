@@ -1,4 +1,4 @@
-package graph
+package graphql
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
@@ -6,6 +6,7 @@ package graph
 
 import (
 	"book-catalog/ent"
+	"book-catalog/graphql/generated"
 	"context"
 )
 
@@ -29,7 +30,7 @@ func (r *mutationResolver) UpdateBook(ctx context.Context, id int, input ent.Upd
 	return r.BookClient.UpdateBook(ctx, id, input)
 }
 
-// Mutation returns MutationResolver implementation.
-func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 type mutationResolver struct{ *Resolver }

@@ -1,4 +1,4 @@
-package graph
+package graphql
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
@@ -6,6 +6,7 @@ package graph
 
 import (
 	"book-catalog/ent"
+	"book-catalog/graphql/generated"
 	"context"
 	"fmt"
 )
@@ -22,7 +23,7 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []int) ([]ent.Noder, erro
 
 // Authors is the resolver for the authors field.
 func (r *queryResolver) Authors(ctx context.Context) ([]*ent.Author, error) {
-	return r.BookClient.Authors(ctx)
+	return r.BookClient.Authors(ctx, nil)
 }
 
 // Books is the resolver for the books field.
@@ -30,7 +31,7 @@ func (r *queryResolver) Books(ctx context.Context) ([]*ent.Book, error) {
 	return r.BookClient.Books(ctx)
 }
 
-// Query returns QueryResolver implementation.
-func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
+// Query returns generated.QueryResolver implementation.
+func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }

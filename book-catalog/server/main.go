@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"book-catalog/ent"
-	"book-catalog/graph"
+	"book-catalog/graphql"
 
 	"book-catalog/ent/migrate"
 
@@ -36,7 +36,7 @@ func main() {
 
 	// Configure the server and start listening on :8081.
 	logger := zerolog.New(os.Stderr).With().Timestamp().Logger().Level(zerolog.DebugLevel)
-	srv := handler.NewDefaultServer(graph.NewSchema(logger, client))
+	srv := handler.NewDefaultServer(graphql.NewSchema(logger, client))
 	http.Handle("/",
 		playground.Handler("Book Catalog", "/query"),
 	)

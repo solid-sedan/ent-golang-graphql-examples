@@ -16,7 +16,7 @@ type BookController interface {
 	UpdateBook(ctx context.Context, id int, input ent.UpdateBookInput) (*ent.Book, error)
 
 	// Query
-	Authors(ctx context.Context) ([]*ent.Author, error)
+	Authors(ctx context.Context, where *ent.AuthorWhereInput) ([]*ent.Author, error)
 	Books(ctx context.Context) ([]*ent.Book, error)
 }
 
@@ -52,9 +52,16 @@ func (c *bookController) UpdateBook(ctx context.Context, id int, input ent.Updat
 	return c.ent.Book.UpdateOneID(id).SetInput(input).Save(ctx)
 }
 
-func (c *bookController) Authors(ctx context.Context) ([]*ent.Author, error) {
+func (c *bookController) Authors(ctx context.Context, where *ent.AuthorWhereInput) ([]*ent.Author, error) {
 	c.logger.Debug().Msg("Authors")
-	return c.ent.Author.Query().All(ctx)
+	// example with filter
+	// more examples (paginations, order, etc) https://entgo.io/docs/tutorial-todo-gql-filter-input/#custom-filters
+	query := c.ent.Author.Query()
+	query, err := where.Filter(query)
+	if err != nil {
+		return nil, err
+	}
+	return query.All(ctx)
 }
 
 func (c *bookController) Books(ctx context.Context) ([]*ent.Book, error) {
