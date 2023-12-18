@@ -9,6 +9,7 @@ import (
 	"errors"
 	"sync/atomic"
 
+	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
 	gqlparser "github.com/vektah/gqlparser/v2"
@@ -48,6 +49,17 @@ type ComplexityRoot struct {
 		Name  func(childComplexity int) int
 	}
 
+	AuthorConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	AuthorEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	Book struct {
 		Author          func(childComplexity int) int
 		CreatedAt       func(childComplexity int) int
@@ -56,6 +68,17 @@ type ComplexityRoot struct {
 		Isbn            func(childComplexity int) int
 		PublicationDate func(childComplexity int) int
 		Title           func(childComplexity int) int
+	}
+
+	BookConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	BookEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -73,8 +96,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Authors func(childComplexity int) int
-		Books   func(childComplexity int) int
+		Authors func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.AuthorWhereInput) int
+		Books   func(childComplexity int, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.BookWhereInput) int
 		Node    func(childComplexity int, id int) int
 		Nodes   func(childComplexity int, ids []int) int
 	}
@@ -127,6 +150,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Author.Name(childComplexity), true
 
+	case "AuthorConnection.edges":
+		if e.complexity.AuthorConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.AuthorConnection.Edges(childComplexity), true
+
+	case "AuthorConnection.pageInfo":
+		if e.complexity.AuthorConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.AuthorConnection.PageInfo(childComplexity), true
+
+	case "AuthorConnection.totalCount":
+		if e.complexity.AuthorConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.AuthorConnection.TotalCount(childComplexity), true
+
+	case "AuthorEdge.cursor":
+		if e.complexity.AuthorEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.AuthorEdge.Cursor(childComplexity), true
+
+	case "AuthorEdge.node":
+		if e.complexity.AuthorEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.AuthorEdge.Node(childComplexity), true
+
 	case "Book.author":
 		if e.complexity.Book.Author == nil {
 			break
@@ -175,6 +233,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Book.Title(childComplexity), true
+
+	case "BookConnection.edges":
+		if e.complexity.BookConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.BookConnection.Edges(childComplexity), true
+
+	case "BookConnection.pageInfo":
+		if e.complexity.BookConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.BookConnection.PageInfo(childComplexity), true
+
+	case "BookConnection.totalCount":
+		if e.complexity.BookConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.BookConnection.TotalCount(childComplexity), true
+
+	case "BookEdge.cursor":
+		if e.complexity.BookEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.BookEdge.Cursor(childComplexity), true
+
+	case "BookEdge.node":
+		if e.complexity.BookEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.BookEdge.Node(childComplexity), true
 
 	case "Mutation.createAuthor":
 		if e.complexity.Mutation.CreateAuthor == nil {
@@ -257,14 +350,24 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.Authors(childComplexity), true
+		args, err := ec.field_Query_authors_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Authors(childComplexity, args["after"].(*entgql.Cursor[int]), args["first"].(*int), args["before"].(*entgql.Cursor[int]), args["last"].(*int), args["where"].(*ent.AuthorWhereInput)), true
 
 	case "Query.books":
 		if e.complexity.Query.Books == nil {
 			break
 		}
 
-		return e.complexity.Query.Books(childComplexity), true
+		args, err := ec.field_Query_books_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Books(childComplexity, args["after"].(*entgql.Cursor[int]), args["first"].(*int), args["before"].(*entgql.Cursor[int]), args["last"].(*int), args["where"].(*ent.BookWhereInput)), true
 
 	case "Query.node":
 		if e.complexity.Query.Node == nil {
@@ -417,6 +520,22 @@ type Author implements Node {
   email: String!
   books: [Book!]
 }
+"""A connection to a list of items."""
+type AuthorConnection {
+  """A list of edges."""
+  edges: [AuthorEdge]
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+"""An edge in a connection."""
+type AuthorEdge {
+  """The item at the end of the edge."""
+  node: Author
+  """A cursor for use in pagination."""
+  cursor: Cursor!
+}
 """
 AuthorWhereInput is used for filtering Author objects.
 Input was generated by ent.
@@ -474,6 +593,22 @@ type Book implements Node {
   isbn: String!
   createdAt: Time!
   author: Author
+}
+"""A connection to a list of items."""
+type BookConnection {
+  """A list of edges."""
+  edges: [BookEdge]
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+  """Identifies the total count of items in the connection."""
+  totalCount: Int!
+}
+"""An edge in a connection."""
+type BookEdge {
+  """The item at the end of the edge."""
+  node: Book
+  """A cursor for use in pagination."""
+  cursor: Cursor!
 }
 """
 BookWhereInput is used for filtering Book objects.
@@ -627,8 +762,38 @@ type Query {
     """The list of node IDs."""
     ids: [ID!]!
   ): [Node]!
-  authors: [Author!]!
-  books: [Book!]!
+  authors(
+    """Returns the elements in the list that come after the specified cursor."""
+    after: Cursor
+
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come before the specified cursor."""
+    before: Cursor
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """Filtering options for Authors returned from the connection."""
+    where: AuthorWhereInput
+  ): AuthorConnection!
+  books(
+    """Returns the elements in the list that come after the specified cursor."""
+    after: Cursor
+
+    """Returns the first _n_ elements from the list."""
+    first: Int
+
+    """Returns the elements in the list that come before the specified cursor."""
+    before: Cursor
+
+    """Returns the last _n_ elements from the list."""
+    last: Int
+
+    """Filtering options for Books returned from the connection."""
+    where: BookWhereInput
+  ): BookConnection!
 }
 """The builtin Time type"""
 scalar Time

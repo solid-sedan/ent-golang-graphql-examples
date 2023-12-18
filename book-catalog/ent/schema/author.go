@@ -31,6 +31,7 @@ func (Author) Edges() []ent.Edge {
 // Annotations of the Author.
 func (Author) Annotations() []schema.Annotation {
 	return []schema.Annotation{
+		entgql.RelayConnection(), // pagination
 		entgql.QueryField(),
 		entgql.Mutations(
 			entgql.MutationCreate(),

@@ -14,10 +14,10 @@ func main() {
 	ex, err := entgql.NewExtension(
 		// Tell Ent to generate a GraphQL schema for
 		// the Ent schema in a file named ent.graphql.
-		entgql.WithSchemaGenerator(),
 		entgql.WithWhereInputs(true), // https://entgo.io/docs/tutorial-todo-gql-filter-input/ TODO filters?
-		entgql.WithSchemaPath("./graphql/ent.graphql"),
 		entgql.WithConfigPath("gqlgen.yml"),
+		entgql.WithSchemaGenerator(),
+		entgql.WithSchemaPath("./graphql/ent.graphql"),
 	)
 	if err != nil {
 		log.Fatalf("creating entgql extension: %v", err)

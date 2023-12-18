@@ -9,6 +9,8 @@ import (
 	"book-catalog/graphql/generated"
 	"context"
 	"fmt"
+
+	"entgo.io/contrib/entgql"
 )
 
 // Node is the resolver for the node field.
@@ -22,13 +24,13 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []int) ([]ent.Noder, erro
 }
 
 // Authors is the resolver for the authors field.
-func (r *queryResolver) Authors(ctx context.Context) ([]*ent.Author, error) {
-	return r.BookClient.Authors(ctx, nil)
+func (r *queryResolver) Authors(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.AuthorWhereInput) (*ent.AuthorConnection, error) {
+	return r.BookClient.Authors(ctx, after, first, before, last, where)
 }
 
 // Books is the resolver for the books field.
-func (r *queryResolver) Books(ctx context.Context) ([]*ent.Book, error) {
-	return r.BookClient.Books(ctx)
+func (r *queryResolver) Books(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.BookWhereInput) (*ent.BookConnection, error) {
+	return r.BookClient.Books(ctx, after, first, before, last, where)
 }
 
 // Query returns generated.QueryResolver implementation.

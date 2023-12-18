@@ -4,6 +4,7 @@ import (
 	"book-catalog/ent"
 	"context"
 
+	"entgo.io/contrib/entgql"
 	"github.com/rs/zerolog"
 )
 
@@ -15,9 +16,23 @@ type BookController interface {
 	CreateBook(ctx context.Context, input ent.CreateBookInput) (*ent.Book, error)
 	UpdateBook(ctx context.Context, id int, input ent.UpdateBookInput) (*ent.Book, error)
 
-	// Query
-	Authors(ctx context.Context, where *ent.AuthorWhereInput) ([]*ent.Author, error)
-	Books(ctx context.Context) ([]*ent.Book, error)
+	// Resolvers
+	Authors(
+		ctx context.Context,
+		after *entgql.Cursor[int],
+		first *int,
+		before *entgql.Cursor[int],
+		last *int,
+		where *ent.AuthorWhereInput,
+	) (*ent.AuthorConnection, error)
+	Books(
+		ctx context.Context,
+		after *entgql.Cursor[int],
+		first *int,
+		before *entgql.Cursor[int],
+		last *int,
+		where *ent.BookWhereInput,
+	) (*ent.BookConnection, error)
 }
 
 type bookController struct {
@@ -52,19 +67,19 @@ func (c *bookController) UpdateBook(ctx context.Context, id int, input ent.Updat
 	return c.ent.Book.UpdateOneID(id).SetInput(input).Save(ctx)
 }
 
-func (c *bookController) Authors(ctx context.Context, where *ent.AuthorWhereInput) ([]*ent.Author, error) {
+func (c *bookController) Authors(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.AuthorWhereInput) (*ent.AuthorConnection, error) {
 	c.logger.Debug().Msg("Authors")
-	// example with filter
 	// more examples (paginations, order, etc) https://entgo.io/docs/tutorial-todo-gql-filter-input/#custom-filters
-	query := c.ent.Author.Query()
-	query, err := where.Filter(query)
-	if err != nil {
-		return nil, err
-	}
-	return query.All(ctx)
+	return c.ent.Author.Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithAuthorFilter(where.Filter),
+		)
 }
 
-func (c *bookController) Books(ctx context.Context) ([]*ent.Book, error) {
+func (c *bookController) Books(ctx context.Context, after *entgql.Cursor[int], first *int, before *entgql.Cursor[int], last *int, where *ent.BookWhereInput) (*ent.BookConnection, error) {
 	c.logger.Debug().Msg("Books")
-	return c.ent.Book.Query().All(ctx)
+	return c.ent.Book.Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithBookFilter(where.Filter),
+		)
 }
