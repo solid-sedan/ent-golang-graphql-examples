@@ -16,7 +16,7 @@ type BookController interface {
 	CreateBook(ctx context.Context, input ent.CreateBookInput) (*ent.Book, error)
 	UpdateBook(ctx context.Context, id int, input ent.UpdateBookInput) (*ent.Book, error)
 
-	// Resolvers
+	// Queries
 	Authors(
 		ctx context.Context,
 		after *entgql.Cursor[int],
